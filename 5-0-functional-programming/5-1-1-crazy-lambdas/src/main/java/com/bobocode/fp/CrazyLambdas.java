@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.*;
 
+import static java.util.function.IntUnaryOperator.identity;
+
 /**
  * {@link CrazyLambdas} is an exercise class. Each method returns a functional interface and it should be implemented
  * using either lambda or a method reference. Every method that is not implemented yet throws
@@ -189,7 +191,7 @@ public class CrazyLambdas {
      * @return a binary function that receiver predicate and function and compose them to create a new function
      */
     public static BiFunction<IntUnaryOperator, IntPredicate, IntUnaryOperator> functionToConditionalFunction() {
-        throw new ExerciseNotCompletedException();
+        return (func, predicate) -> x -> predicate.test(x) ? func.applyAsInt(x) : x;
     }
 
     /**
@@ -200,7 +202,7 @@ public class CrazyLambdas {
      * @return a high-order function that fetches a function from a function map by a given name or returns identity()
      */
     public static BiFunction<Map<String, IntUnaryOperator>, String, IntUnaryOperator> functionLoader() {
-        throw new ExerciseNotCompletedException();
+        return (map,name) -> map.containsKey(name) ? map.get(name) : identity();
     }
 
     /**
@@ -218,7 +220,7 @@ public class CrazyLambdas {
      * @return a comparator instance
      */
     public static <T, U extends Comparable<? super U>> Comparator<T> comparing(Function<? super T, ? extends U> mapper) {
-        throw new ExerciseNotCompletedException();
+        return (o1, o2) -> mapper.apply(o1).compareTo(mapper.apply(o2));
     }
 
     /**
@@ -238,7 +240,11 @@ public class CrazyLambdas {
      */
     public static <T, U extends Comparable<? super U>> Comparator<T> thenComparing(
             Comparator<? super T> comparator, Function<? super T, ? extends U> mapper) {
-        throw new ExerciseNotCompletedException();
+        return (o1, o2) -> {
+            int result = comparator.compare(o1, o2);
+            if(result != 0) return result;
+            return mapper.apply(o1).compareTo(mapper.apply(o2));
+        };
     }
 
     /**
@@ -247,7 +253,7 @@ public class CrazyLambdas {
      * @return a supplier instance
      */
     public static Supplier<Supplier<Supplier<String>>> trickyWellDoneSupplier() {
-        throw new ExerciseNotCompletedException();
+        return () -> () -> () -> "WELL DONE!";
     }
 }
 
